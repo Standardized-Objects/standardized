@@ -20,7 +20,7 @@ import (
   "fmt"
   "os"
   "github.com/spf13/cobra"
-
+  "path/filepath"
   homedir "github.com/mitchellh/go-homedir"
   "github.com/spf13/viper"
 
@@ -40,9 +40,6 @@ examples and usage of using your application. For example:
 Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
-  // Uncomment the following line if your bare application
-  // has an action associated with it:
-  //	Run: func(cmd *cobra.Command, args []string) { },
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
@@ -56,7 +53,7 @@ func Execute() {
 
 func init() {
   cobra.OnInitialize(initConfig)
-  rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.standardized/config.yaml)")
+  rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is " + filepath.Join("$HOME",".standardized","config.yaml") + ")")
 }
 
 
@@ -74,8 +71,8 @@ func initConfig() {
     }
 
     // Search config in home directory with name ".standardized" (without extension).
-    viper.AddConfigPath(home + "/.standardized")
-    viper.SetConfigName("config.yaml")
+    viper.AddConfigPath(filepath.Join(home , ".standardized"))
+    viper.SetConfigName("config")
   }
 
   viper.AutomaticEnv() // read in environment variables that match
