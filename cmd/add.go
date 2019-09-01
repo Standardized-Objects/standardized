@@ -20,20 +20,24 @@ import (
   "fmt"
   "standardized/common"
   "github.com/spf13/cobra"
+  "os"
 )
 
 // addCmd represents the add command
 var addCmd = &cobra.Command{
-  Use:   "add",
+  Use:   "add [NAME] [GIT URL]",
   Short: "Add Standardized Objects repositories to $HOME/.standardize/repos.yaml",
   Run: func(cmd *cobra.Command, args []string) {
+    if len(args) != 2 {
+      fmt.Println("Invalid arguments")
+      os.Exit(1)
+    }
+
     fmt.Println(common.GetConfigDir())
   },
 }
 
 func init() {
   repoCmd.AddCommand(addCmd)
-  addCmd.Flags().String("name", "", "Repo name")
-  addCmd.Flags().String("url", "", "Git url")
-  addCmd.Flags().String("branch", "", "Git branch")
+  addCmd.Flags().String("branch", "", "Git branch, default is master")
 }
