@@ -20,6 +20,7 @@ import (
   "fmt"
   "standardized/common"
   "github.com/spf13/cobra"
+  "github.com/spf13/viper"
   "os"
 )
 
@@ -33,7 +34,24 @@ var addCmd = &cobra.Command{
       os.Exit(1)
     }
 
-    fmt.Println(common.GetConfigDir())
+    type Repo struct {
+        Url string
+        Branch string
+    }
+
+    configFile := common.GetConfigDir() + "/repos.yaml"
+
+    _, err := os.Stat(configFile)
+    if os.IsNotExist(err) {
+      os.Create(configFile)
+    }
+
+    viper.AddConfigPath(common.GetConfigDir())
+    viper.SetConfigName("repos")
+    viper.SetConfigType("yaml")
+    viper.ReadInConfig()
+    viper.Set(args[0], Repo{args[1],"master"})
+    viper.WriteConfig()
   },
 }
 
