@@ -17,26 +17,41 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 package cmd
 
 import (
-	"fmt"
+  "fmt"
   "os"
-	"github.com/spf13/cobra"
+  "github.com/spf13/cobra"
+  "standardized/common"
 )
 
-var objName string
-
 var createCmd = &cobra.Command{
-	Use:   "create <NAME>",
-	Short: "Create a new Object Definition with the given name",
-	Run: func(cmd *cobra.Command, args []string) {
+  Use:   "create <NAME>",
+  Short: "Create a new Object Definition with the given name",
+  Run: func(cmd *cobra.Command, args []string) {
     if len(args) != 1 {
       fmt.Println("Invalid arguments")
       os.Exit(1)
     }
+
     os.MkdirAll(args[0] + "/templates", os.ModePerm)
+
+    s, _ := os.Create(args[0] + "/spec.yaml")
+    s.Write([]byte("name: {{.objName}}\ndescription: Custom Object Definition\ncontent: []\n"))
+    s.Close()
+
+    values := map[string]string{
+      "objName": args[0],
+    }
+
+    common.ParseTemplate(args[0] + "/spec.yaml", values)
+
+    r, _ := os.Create(args[0] + "/templates/README.txt")
+    r.Write([]byte("Add your template files here\n"))
+    r.Close()
+
     fmt.Println("New Object Definition: " + args[0])
-	},
+  },
 }
 
 func init() {
-	objectCmd.AddCommand(createCmd)
+  objectCmd.AddCommand(createCmd)
 }

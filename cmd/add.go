@@ -17,23 +17,23 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 package cmd
 
 import (
-	"fmt"
+  "fmt"
   "standardized/common"
-	"github.com/spf13/cobra"
+  "github.com/spf13/cobra"
 )
 
 // addCmd represents the add command
 var addCmd = &cobra.Command{
-	Use:   "add",
-	Short: "Add Standardized Objects repositories to $HOME/.standardize/repos.yaml",
-	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println(common.GetConfigDir())
-	},
+  Use:   "add",
+  Short: "Add Standardized Objects repositories to $HOME/.standardize/repos.yaml",
+  Run: func(cmd *cobra.Command, args []string) {
+    fmt.Println(common.GetConfigDir())
+  },
 }
 
 func init() {
-	repoCmd.AddCommand(addCmd)
-	addCmd.Flags().String("name", "", "Repo name")
-	addCmd.Flags().String("url", "", "Git url")
-	addCmd.Flags().String("branch", "", "Git branch")
+  repoCmd.AddCommand(addCmd)
+  addCmd.Flags().String("name", "", "Repo name")
+  addCmd.Flags().String("url", "", "Git url")
+  addCmd.Flags().String("branch", "", "Git branch")
 }
