@@ -20,6 +20,7 @@ import (
   "fmt"
   "os"
   "html/template"
+  "path/filepath"
 	"log"
   homedir "github.com/mitchellh/go-homedir"
 )
@@ -30,7 +31,7 @@ func GetConfigDir() string {
     fmt.Println(err)
     os.Exit(1)
   }
-  return home + "/.standardize"
+  return filepath.Join(home, ".standardize")
 }
 
 func ParseTemplate(path string, values map[string]string) {
