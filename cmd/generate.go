@@ -18,17 +18,19 @@ package cmd
 
 import (
 	"fmt"
+
 	"github.com/spf13/cobra"
 )
 
-var searchCmd = &cobra.Command{
-	Use:   "search",
-	Short: "Search for Object Definitions",
+// createCmd represents the create command
+var generateCmd = &cobra.Command{
+	Use:   "generate",
+	Short: "Generate an object from Object Definition",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("search called")
+		fmt.Println("create called")
 	},
 }
 
 func init() {
-	objectCmd.AddCommand(searchCmd)
+	objectCmd.AddCommand(generateCmd)
 }
