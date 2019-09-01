@@ -24,6 +24,8 @@ import (
   "os"
 )
 
+var gitBranch string
+
 // addCmd represents the add command
 var addCmd = &cobra.Command{
   Use:   "add [NAME] [GIT URL]",
@@ -50,12 +52,12 @@ var addCmd = &cobra.Command{
     viper.SetConfigName("repos")
     viper.SetConfigType("yaml")
     viper.ReadInConfig()
-    viper.Set("repositories." + args[0], Repo{args[1],"master"})
+    viper.Set("repositories." + args[0], Repo{args[1], gitBranch})
     viper.WriteConfig()
   },
 }
 
 func init() {
   repoCmd.AddCommand(addCmd)
-  addCmd.Flags().String("branch", "", "Git branch, default is master")
+  addCmd.Flags().StringVarP(&gitBranch, "branch", "b", "master", "Git branch")
 }
