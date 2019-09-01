@@ -29,7 +29,7 @@ var gitBranch string
 // addCmd represents the add command
 var addCmd = &cobra.Command{
   Use:   "add [NAME] [GIT URL]",
-  Short: "Add Standardized Objects repositories to $HOME/.standardize/repos.yaml",
+  Short: "Add Standardized Objects Definitions repositories",
   Run: func(cmd *cobra.Command, args []string) {
     if len(args) != 2 {
       fmt.Println("Invalid arguments")
