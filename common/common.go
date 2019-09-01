@@ -17,9 +17,10 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 package common
 
 import (
-  // "gopkg.in/src-d/go-git.v4"
   "fmt"
   "os"
+  "html/template"
+	"log"
   homedir "github.com/mitchellh/go-homedir"
 )
 
@@ -32,3 +33,23 @@ func GetConfigDir() string {
   return home + "/.standardize"
 }
 
+func ParseTemplate(path string, values map[string]string) {
+  t, err := template.ParseFiles(path)
+  if err != nil {
+    log.Print(err)
+    return
+  }
+
+  f, err := os.Create(path)
+  if err != nil {
+    log.Println("create file: ", err)
+    return
+  }
+
+  err = t.Execute(f, values)
+  if err != nil {
+    log.Print("execute: ", err)
+    return
+  }
+  f.Close()
+}
