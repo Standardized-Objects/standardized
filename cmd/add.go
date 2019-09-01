@@ -25,7 +25,7 @@ import (
 // addCmd represents the add command
 var addCmd = &cobra.Command{
 	Use:   "add",
-	Short: "standardized repo add <REPO NAME> <GIT URL> <BRANCH>",
+	Short: "Add Standardized Objects repos",
 	Long: `Add Standardized Objects repos to $HOME/.standardize/repos.yaml`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("add called")
@@ -43,5 +43,7 @@ func init() {
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	// addCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	addCmd.Flags().String("name", "", "Repo name")
+	addCmd.Flags().String("url", "", "Git url")
+	addCmd.Flags().String("branch", "", "Git branch")
 }
