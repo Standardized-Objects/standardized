@@ -17,19 +17,19 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 package cmd
 
 import (
-	"fmt"
+  "fmt"
 
-	"github.com/spf13/cobra"
+  "github.com/spf13/cobra"
 )
 
 var updateCmd = &cobra.Command{
-	Use:   "update",
-	Short: "Update objects definitions",
-	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("update called")
-	},
+  Use:   "update",
+  Short: "Update objects definitions",
+  Run: func(cmd *cobra.Command, args []string) {
+    fmt.Println("update called")
+  },
 }
 
 func init() {
-	repoCmd.AddCommand(updateCmd)
+  repoCmd.AddCommand(updateCmd)
 }

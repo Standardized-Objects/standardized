@@ -17,20 +17,20 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 package cmd
 
 import (
-	"fmt"
+  "fmt"
 
-	"github.com/spf13/cobra"
+  "github.com/spf13/cobra"
 )
 
 // createCmd represents the create command
 var generateCmd = &cobra.Command{
-	Use:   "generate",
-	Short: "Generate an object from Object Definition",
-	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("create called")
-	},
+  Use:   "generate",
+  Short: "Generate an object from Object Definition",
+  Run: func(cmd *cobra.Command, args []string) {
+    fmt.Println("create called")
+  },
 }
 
 func init() {
-	objectCmd.AddCommand(generateCmd)
+  objectCmd.AddCommand(generateCmd)
 }

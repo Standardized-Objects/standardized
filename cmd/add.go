@@ -35,8 +35,8 @@ var addCmd = &cobra.Command{
     }
 
     type Repo struct {
-        Url string
-        Branch string
+      Url string
+      Branch string
     }
 
     configFile := common.GetConfigDir() + "/repos.yaml"
@@ -50,7 +50,7 @@ var addCmd = &cobra.Command{
     viper.SetConfigName("repos")
     viper.SetConfigType("yaml")
     viper.ReadInConfig()
-    viper.Set(args[0], Repo{args[1],"master"})
+    viper.Set("repositories." + args[0], Repo{args[1],"master"})
     viper.WriteConfig()
   },
 }

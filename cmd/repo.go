@@ -17,14 +17,14 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 package cmd
 
 import (
-	"github.com/spf13/cobra"
+  "github.com/spf13/cobra"
 )
 
 var repoCmd = &cobra.Command{
-	Use:   "repo",
-	Short: "Manage Object Definitions repositories",
+  Use:   "repo",
+  Short: "Manage Object Definitions repositories",
 }
 
 func init() {
-	rootCmd.AddCommand(repoCmd)
+  rootCmd.AddCommand(repoCmd)
 }

@@ -17,19 +17,40 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 package cmd
 
 import (
-	"fmt"
-	"github.com/spf13/cobra"
+  "fmt"
+  "standardized/common"
+  "github.com/spf13/cobra"
+  "github.com/spf13/viper"
+  "os"
 )
 
 // removeCmd represents the remove command
 var removeCmd = &cobra.Command{
-	Use:   "remove [name]",
-	Short: "Remove a repository",
-	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("remove called")
-	},
+  Use:   "remove [name]",
+  Short: "Remove a repository",
+  Run: func(cmd *cobra.Command, args []string) {
+    if len(args) != 1 {
+      fmt.Println("Invalid arguments")
+      os.Exit(1)
+    }
+
+    configFile := common.GetConfigDir() + "/repos.yaml"
+
+    _, err := os.Stat(configFile)
+    if os.IsNotExist(err) {
+      fmt.Println("Add a repository first.")
+      os.Exit(0)
+    }
+
+    viper.AddConfigPath(common.GetConfigDir())
+    viper.SetConfigName("repos")
+    viper.SetConfigType("yaml")
+    viper.ReadInConfig()
+    delete(viper.Get("repositories").(map[string]interface{}), args[0])
+    viper.WriteConfig()
+  },
 }
 
 func init() {
-	repoCmd.AddCommand(removeCmd)
+  repoCmd.AddCommand(removeCmd)
 }

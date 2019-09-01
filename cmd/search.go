@@ -17,18 +17,18 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 package cmd
 
 import (
-	"fmt"
-	"github.com/spf13/cobra"
+  "fmt"
+  "github.com/spf13/cobra"
 )
 
 var searchCmd = &cobra.Command{
-	Use:   "search",
-	Short: "Search for Object Definitions",
-	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("search called")
-	},
+  Use:   "search",
+  Short: "Search for Object Definitions",
+  Run: func(cmd *cobra.Command, args []string) {
+    fmt.Println("search called")
+  },
 }
 
 func init() {
-	objectCmd.AddCommand(searchCmd)
+  objectCmd.AddCommand(searchCmd)
 }
