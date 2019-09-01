@@ -25,7 +25,7 @@ import (
 // listCmd represents the list command
 var listCmd = &cobra.Command{
 	Use:   "list",
-	Short: "List available repos from $HOME/.standardize/repos.yaml",
+	Short: "List available repositories from $HOME/.standardize/repos.yaml",
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("list called")
 	},

@@ -25,7 +25,7 @@ import (
 // addCmd represents the add command
 var addCmd = &cobra.Command{
 	Use:   "add",
-	Short: "Add Standardized Objects repos to $HOME/.standardize/repos.yaml",
+	Short: "Add Standardized Objects repositories to $HOME/.standardize/repos.yaml",
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println(common.GetConfigDir())
 	},
