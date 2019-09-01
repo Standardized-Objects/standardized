@@ -18,19 +18,25 @@ package cmd
 
 import (
 	"fmt"
-
+  "os"
 	"github.com/spf13/cobra"
 )
 
+var objName string
+
 var createCmd = &cobra.Command{
-	Use:   "create",
+	Use:   "create <NAME>",
 	Short: "Create a new Object Definition with the given name",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("template called")
+    if len(args) != 1 {
+      fmt.Println("Invalid arguments")
+      os.Exit(1)
+    }
+    os.MkdirAll(args[0] + "/templates", os.ModePerm)
+    fmt.Println("New Object Definition: " + args[0])
 	},
 }
 
 func init() {
 	objectCmd.AddCommand(createCmd)
-  createCmd.Flags().String("name", "", "Object name")
 }
