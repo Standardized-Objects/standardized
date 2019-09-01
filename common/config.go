@@ -14,26 +14,21 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
-package cmd
+package common
 
 import (
-	"fmt"
-  "standardized/common"
-	"github.com/spf13/cobra"
+  // "gopkg.in/src-d/go-git.v4"
+  "fmt"
+  "os"
+  homedir "github.com/mitchellh/go-homedir"
 )
 
-// addCmd represents the add command
-var addCmd = &cobra.Command{
-	Use:   "add",
-	Short: "Add Standardized Objects repos to $HOME/.standardize/repos.yaml",
-	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println(common.GetConfigDir())
-	},
+func GetConfigDir() string {
+  home, err := homedir.Dir()
+  if err != nil {
+    fmt.Println(err)
+    os.Exit(1)
+  }
+  return home + "/.standardize"
 }
 
-func init() {
-	repoCmd.AddCommand(addCmd)
-	addCmd.Flags().String("name", "", "Repo name")
-	addCmd.Flags().String("url", "", "Git url")
-	addCmd.Flags().String("branch", "", "Git branch")
-}
