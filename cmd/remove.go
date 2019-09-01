@@ -17,32 +17,19 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 package cmd
 
 import (
-  "fmt"
-  "standardized/common"
-  "github.com/spf13/cobra"
-  "os"
-  "io"
+	"fmt"
+	"github.com/spf13/cobra"
 )
 
-// listCmd represents the list command
-var listCmd = &cobra.Command{
-  Use:   "list",
-  Short: "List available repositories",
-  Run: func(cmd *cobra.Command, args []string) {
-    configFile := common.GetConfigDir() + "/repos.yaml"
-
-    _, err := os.Stat(configFile)
-    if os.IsNotExist(err) {
-      fmt.Println("Add a repository first.")
-      os.Exit(0)
-    }
-
-    f, _ := os.Open(configFile)
-    io.Copy(os.Stdout, f)
-    f.Close()
-  },
+// removeCmd represents the remove command
+var removeCmd = &cobra.Command{
+	Use:   "remove [name]",
+	Short: "Remove a repository",
+	Run: func(cmd *cobra.Command, args []string) {
+		fmt.Println("remove called")
+	},
 }
 
 func init() {
-  repoCmd.AddCommand(listCmd)
+	repoCmd.AddCommand(removeCmd)
 }
