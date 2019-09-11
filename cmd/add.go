@@ -21,21 +21,29 @@ import (
   "standardized/internal"
   "github.com/spf13/cobra"
   "gopkg.in/src-d/go-git.v4"
+  "gopkg.in/src-d/go-git.v4/plumbing/transport/http"
   "path/filepath"
   "os"
   "log"
 )
 
 var addCmd = &cobra.Command{
-  Use:   "add [NAME] [GIT URL]",
+  Use:   "add [NAME] [GIT URL] [GITHUB TOKEN]",
   Short: "Add Standardized Objects Definitions repositories",
   Run: func(cmd *cobra.Command, args []string) {
-    if len(args) != 2 {
+    if len(args) != 3 {
       fmt.Println("Invalid arguments")
       os.Exit(1)
     }
 
     _, err := git.PlainClone(filepath.Join(common.GetConfigDir(), args[0]), false, &git.CloneOptions{
+      // The intended use of a GitHub personal access token is in replace of your password
+      // because access tokens can easily be revoked.
+      // https://help.github.com/articles/creating-a-personal-access-token-for-the-command-line/
+      Auth: &http.BasicAuth{
+        Username: "standardized", // yes, this can be anything except an empty string
+        Password: args[2],
+      },
       URL:      args[1],
       Progress: os.Stdout,
     })
