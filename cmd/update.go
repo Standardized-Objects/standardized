@@ -18,12 +18,13 @@ package cmd
 
 import (
   "fmt"
-
   "github.com/spf13/cobra"
 )
 
+var UpdateAll bool
+
 var updateCmd = &cobra.Command{
-  Use:   "update",
+  Use:   "update [REPO NAME]",
   Short: "Update objects definitions",
   Run: func(cmd *cobra.Command, args []string) {
     fmt.Println("update called")
@@ -32,4 +33,5 @@ var updateCmd = &cobra.Command{
 
 func init() {
   repoCmd.AddCommand(updateCmd)
+  updateCmd.Flags().BoolVarP(&UpdateAll, "all", "a", false, "Update all")
 }
