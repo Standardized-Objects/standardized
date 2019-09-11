@@ -39,6 +39,8 @@ repository:
 
 # Labels: define labels for Issues and Pull Requests
 labels:
+  - name: wontfix
+    color: CCCC00
   - name: bug
     color: CC0000
   - name: feature
