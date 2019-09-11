@@ -18,15 +18,14 @@ package cmd
 
 import (
   "fmt"
-  "standardized/common"
+  "standardized/internal"
   "github.com/spf13/cobra"
-  "github.com/spf13/viper"
+  "gopkg.in/src-d/go-git.v4"
+  "path/filepath"
   "os"
+  "log"
 )
 
-var gitBranch string
-
-// addCmd represents the add command
 var addCmd = &cobra.Command{
   Use:   "add [NAME] [GIT URL]",
   Short: "Add Standardized Objects Definitions repositories",
@@ -36,28 +35,17 @@ var addCmd = &cobra.Command{
       os.Exit(1)
     }
 
-    type Repo struct {
-      Url string
-      Branch string
+    _, err := git.PlainClone(filepath.Join(common.GetConfigDir(), args[0]), false, &git.CloneOptions{
+      URL:      args[1],
+      Progress: os.Stdout,
+    })
+
+    if err != nil {
+      log.Fatal(err)
     }
-
-    configFile := common.GetConfigDir() + "/repos.yaml"
-
-    _, err := os.Stat(configFile)
-    if os.IsNotExist(err) {
-      os.Create(configFile)
-    }
-
-    viper.AddConfigPath(common.GetConfigDir())
-    viper.SetConfigName("repos")
-    viper.SetConfigType("yaml")
-    viper.ReadInConfig()
-    viper.Set("repositories." + args[0], Repo{args[1], gitBranch})
-    viper.WriteConfig()
   },
 }
 
 func init() {
   repoCmd.AddCommand(addCmd)
-  addCmd.Flags().StringVarP(&gitBranch, "branch", "b", "master", "Git branch")
 }

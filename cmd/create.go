@@ -20,7 +20,7 @@ import (
   "fmt"
   "os"
   "github.com/spf13/cobra"
-  "standardized/common"
+  "standardized/internal"
 )
 
 var createCmd = &cobra.Command{

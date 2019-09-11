@@ -18,10 +18,10 @@ package cmd
 
 import (
   "fmt"
-  "standardized/common"
+  "standardized/internal"
   "github.com/spf13/cobra"
-  "os"
-  "io"
+  "io/ioutil"
+  "log"
 )
 
 // listCmd represents the list command
@@ -29,17 +29,14 @@ var listCmd = &cobra.Command{
   Use:   "list",
   Short: "List available repositories",
   Run: func(cmd *cobra.Command, args []string) {
-    configFile := common.GetConfigDir() + "/repos.yaml"
-
-    _, err := os.Stat(configFile)
-    if os.IsNotExist(err) {
-      fmt.Println("Add a repository first.")
-      os.Exit(0)
+    files, err := ioutil.ReadDir(common.GetConfigDir())
+    if err != nil {
+      log.Fatal(err)
     }
 
-    f, _ := os.Open(configFile)
-    io.Copy(os.Stdout, f)
-    f.Close()
+    for _, f := range files {
+      fmt.Println(f.Name())
+    }
   },
 }
 

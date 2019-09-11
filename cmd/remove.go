@@ -18,9 +18,8 @@ package cmd
 
 import (
   "fmt"
-  "standardized/common"
+  "standardized/internal"
   "github.com/spf13/cobra"
-  "github.com/spf13/viper"
   "os"
 )
 
@@ -33,21 +32,6 @@ var removeCmd = &cobra.Command{
       fmt.Println("Invalid arguments")
       os.Exit(1)
     }
-
-    configFile := common.GetConfigDir() + "/repos.yaml"
-
-    _, err := os.Stat(configFile)
-    if os.IsNotExist(err) {
-      fmt.Println("Add a repository first.")
-      os.Exit(0)
-    }
-
-    viper.AddConfigPath(common.GetConfigDir())
-    viper.SetConfigName("repos")
-    viper.SetConfigType("yaml")
-    viper.ReadInConfig()
-    delete(viper.Get("repositories").(map[string]interface{}), args[0])
-    viper.WriteConfig()
   },
 }
 
