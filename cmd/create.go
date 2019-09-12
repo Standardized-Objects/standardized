@@ -19,10 +19,12 @@ package cmd
 import (
   "fmt"
   "github.com/spf13/cobra"
+  "github.com/spf13/viper"
   "standardized/internal"
   "os"
   "strings"
   "path/filepath"
+  //"bufio"
 )
 
 var outputPath string
@@ -43,9 +45,32 @@ var createCmd = &cobra.Command{
       output_dir = filepath.Join(output_dir, outputPath)
     }
 
-    templates_dir := filepath.Join(filepath.Join(filepath.Join(filepath.Join(tools.GetConfigDir(), obj[0]), "src"), obj[1]), "templates")
+    obj_dir := filepath.Join(filepath.Join(filepath.Join(tools.GetConfigDir(), obj[0]), "src"), obj[1])
+    templates_dir := filepath.Join(obj_dir, "templates")
 
     tools.CopyDirectory(templates_dir, output_dir)
+
+    viper.SetConfigType("yaml")
+    viper.SetConfigName("config")
+    viper.AddConfigPath(obj_dir)
+    err := viper.ReadInConfig()
+    if err != nil {
+      panic(fmt.Errorf("Fatal error config file: %s \n", err))
+    }
+
+    values := viper.Get("values")
+    // var config map[string]string
+
+    for _, data := range values.([]interface{}) {
+      for _, v := range data.(map[interface{}]interface{}) {
+        switch t := v.(type) {
+        case string, []int:
+          fmt.Println(t)
+        default:
+          fmt.Println("wrong type")
+        }
+      }
+    }
   },
 }
 
