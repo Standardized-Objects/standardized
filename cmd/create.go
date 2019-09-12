@@ -38,18 +38,21 @@ var createCmd = &cobra.Command{
       os.Exit(1)
     }
 
+    // Split object name into repo and folder
     obj := strings.Split(args[0],"/")
 
+    // Where to output the files
     output_dir , _ := os.Getwd()
     if outputPath != "" {
       output_dir = filepath.Join(output_dir, outputPath)
     }
 
+    // Copy templates from object definition
     obj_dir := filepath.Join(filepath.Join(filepath.Join(tools.GetConfigDir(), obj[0]), "src"), obj[1])
     templates_dir := filepath.Join(obj_dir, "templates")
-
     tools.CopyDirectory(templates_dir, output_dir)
 
+    // Read object configuration
     viper.SetConfigType("yaml")
     viper.SetConfigName("config")
     viper.AddConfigPath(obj_dir)
@@ -58,6 +61,7 @@ var createCmd = &cobra.Command{
       panic(fmt.Errorf("Fatal error config file: %s \n", err))
     }
 
+    // WIP: Apply values
     values := viper.Get("values")
     config :=  make(map[string]string, len(values.([]interface{})))
 
@@ -69,6 +73,8 @@ var createCmd = &cobra.Command{
     }
 
     fmt.Println(config)
+
+    // WIP: Run post create hooks
   },
 }
 
