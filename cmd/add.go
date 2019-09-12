@@ -45,7 +45,7 @@ var addCmd = &cobra.Command{
       // tools.CloneSSH(tools.RepoInit(args[0],"ssh",sshKey), args[1])
       fmt.Println("Not yet")
     } else if githubToken != "" {
-      tools.CloneGitHub(tools.RepoInit(args[0], "github", githubToken), githubToken, args[1])
+      tools.CloneGitHub(tools.RepoInit(args[0], "github", githubToken), args[1])
     } else {
       tools.ClonePublic(tools.RepoInit(args[0], "pubic", ""), args[1])
     }

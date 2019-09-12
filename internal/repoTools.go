@@ -19,9 +19,11 @@ package tools
 import (
   "gopkg.in/src-d/go-git.v4"
   "gopkg.in/src-d/go-git.v4/plumbing/transport/http"
+  "github.com/spf13/viper"
   "path/filepath"
   "os"
   "log"
+  "fmt"
 )
 
 func RepoInit (name string, auth_type string, auth_value string) string {
@@ -44,7 +46,20 @@ func RepoInit (name string, auth_type string, auth_value string) string {
   return repo_path
 }
 
-func CloneGitHub (path string, token string, url string) {
+func ParseRepoAuth(path string) (string, string) {
+  viper.SetConfigType("yaml")
+  viper.SetConfigName("auth")
+  viper.AddConfigPath(path)
+  err := viper.ReadInConfig()
+  if err != nil {
+    panic(fmt.Errorf("Fatal error config file: %s \n", err))
+  }
+
+  return viper.GetString("type"), viper.GetString("value")
+}
+
+func CloneGitHub (path string, url string) {
+  _, token := ParseRepoAuth(path)
   _, err := git.PlainClone(filepath.Join(path, "src"), false, &git.CloneOptions{
     // The intended use of a GitHub personal access token is in replace of your password
     // because access tokens can easily be revoked.

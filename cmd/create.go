@@ -62,7 +62,7 @@ var createCmd = &cobra.Command{
       panic(fmt.Errorf("Fatal error config file: %s \n", err))
     }
 
-    // WIP: Apply values
+    // Apply values
     values := viper.Get("values")
     config :=  make(map[string]string, len(values.([]interface{})))
 
