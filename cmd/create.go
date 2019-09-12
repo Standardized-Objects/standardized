@@ -25,6 +25,7 @@ import (
   "strings"
   "path/filepath"
   "bufio"
+  "log"
 )
 
 var outputPath string
@@ -72,7 +73,22 @@ var createCmd = &cobra.Command{
       config[data.(map[interface{}]interface{})["tag"].(string)] = value
     }
 
-    fmt.Println(config)
+    wlk_err := filepath.Walk(output_dir,
+    func(path string, info os.FileInfo, err error) error {
+      if err != nil {
+        return err
+      }
+
+      if !info.IsDir() {
+        fmt.Println(path, info.Size())
+        tools.ParseTemplate(path, config)
+      }
+      return nil
+    })
+
+    if wlk_err != nil {
+      log.Println(wlk_err)
+    }
 
     // WIP: Run post create hooks
   },
