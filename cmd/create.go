@@ -70,7 +70,7 @@ var createCmd = &cobra.Command{
       reader := bufio.NewReader(os.Stdin)
       fmt.Println(data.(map[interface{}]interface{})["description"].(string) + ":")
       value, _ := reader.ReadString('\n')
-      config[data.(map[interface{}]interface{})["tag"].(string)] = value
+      config[data.(map[interface{}]interface{})["tag"].(string)] = strings.TrimSuffix(value, "\n")
     }
 
     wlk_err := filepath.Walk(output_dir,
@@ -80,7 +80,6 @@ var createCmd = &cobra.Command{
       }
 
       if !info.IsDir() {
-        fmt.Println(path, info.Size())
         tools.ParseTemplate(path, config)
       }
       return nil
