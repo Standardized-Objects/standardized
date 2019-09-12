@@ -20,40 +20,41 @@ import (
   "fmt"
   "standardized/internal"
   "github.com/spf13/cobra"
-  "gopkg.in/src-d/go-git.v4"
-  "gopkg.in/src-d/go-git.v4/plumbing/transport/http"
-  "path/filepath"
   "os"
-  "log"
 )
 
+var sshAuth bool
+var sshKey string
+var githubToken string
+
 var addCmd = &cobra.Command{
-  Use:   "add [NAME] [GIT URL] [GITHUB TOKEN]",
+  Use:   "add [NAME] [GIT URL]",
   Short: "Add Standardized Objects Definitions repositories",
   Run: func(cmd *cobra.Command, args []string) {
-    if len(args) != 3 {
+    if len(args) != 2 {
       fmt.Println("Invalid arguments")
       os.Exit(1)
     }
 
-    _, err := git.PlainClone(filepath.Join(common.GetConfigDir(), args[0]), false, &git.CloneOptions{
-      // The intended use of a GitHub personal access token is in replace of your password
-      // because access tokens can easily be revoked.
-      // https://help.github.com/articles/creating-a-personal-access-token-for-the-command-line/
-      Auth: &http.BasicAuth{
-        Username: "standardized", // yes, this can be anything except an empty string
-        Password: args[2],
-      },
-      URL:      args[1],
-      Progress: os.Stdout,
-    })
+    if args[0] == "_local" {
+      fmt.Println("Reserved string: _local")
+      os.Exit(1)
+    }
 
-    if err != nil {
-      log.Fatal(err)
+    if sshAuth {
+      // tools.CloneSSH(tools.RepoInit(args[0],"ssh",sshKey), args[1])
+      fmt.Println("Not yet")
+    } else if githubToken != "" {
+      tools.CloneGitHub(tools.RepoInit(args[0], "github", githubToken), githubToken, args[1])
+    } else {
+      tools.ClonePublic(tools.RepoInit(args[0], "pubic", ""), args[1])
     }
   },
 }
 
 func init() {
   repoCmd.AddCommand(addCmd)
+  addCmd.Flags().BoolVarP(&sshAuth, "ssh", "s", false, "Use SSH for repo auth")
+  addCmd.Flags().StringVarP(&sshKey, "key", "k", "~/.ssh/id_rsa", "SSH private key")
+  addCmd.Flags().StringVarP(&githubToken, "token", "t", "", "Use GitHub Personal Access Token for repo auth")
 }

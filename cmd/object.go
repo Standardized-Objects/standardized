@@ -22,7 +22,7 @@ import (
 
 var objectCmd = &cobra.Command{
   Use:   "object",
-  Short: "Create , generate and search for Objects",
+  Short: "List and create Objects",
 }
 
 func init() {

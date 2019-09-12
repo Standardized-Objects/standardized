@@ -24,22 +24,29 @@ import (
   "log"
 )
 
-// listCmd represents the list command
 var listCmd = &cobra.Command{
   Use:   "list",
-  Short: "List available repositories",
+  Short: "List available objects",
   Run: func(cmd *cobra.Command, args []string) {
-    files, err := ioutil.ReadDir(common.GetConfigDir())
+    config_dir := tools.GetConfigDir()
+
+    files, err := ioutil.ReadDir(config_dir)
     if err != nil {
       log.Fatal(err)
     }
 
     for _, f := range files {
-      fmt.Println(f.Name())
+      objs, _ := ioutil.ReadDir(config_dir + "/" + f.Name() + "/src")
+      for _, o := range objs {
+        mode := o.Mode()
+        if mode.IsDir() && o.Name()[:1] != "." {
+          fmt.Println(f.Name() + "/" + o.Name())
+        }
+      }
     }
   },
 }
 
 func init() {
-  repoCmd.AddCommand(listCmd)
+  objectCmd.AddCommand(listCmd)
 }

@@ -18,40 +18,38 @@ package cmd
 
 import (
   "fmt"
-  "os"
   "github.com/spf13/cobra"
   "standardized/internal"
+  "os"
+  "strings"
+  "path/filepath"
 )
 
+var outputPath string
+
 var createCmd = &cobra.Command{
-  Use:   "create <NAME>",
-  Short: "Create a new Object Definition with the given name",
+  Use:   "create [OBJECT]",
+  Short: "Cenerate an object from Object Definition",
   Run: func(cmd *cobra.Command, args []string) {
     if len(args) != 1 {
       fmt.Println("Invalid arguments")
       os.Exit(1)
     }
 
-    os.MkdirAll(args[0] + "/templates", os.ModePerm)
+    obj := strings.Split(args[0],"/")
 
-    s, _ := os.Create(args[0] + "/spec.yaml")
-    s.Write([]byte("name: {{.objName}}\ndescription: Custom Object Definition\ncontent: []\n"))
-    s.Close()
-
-    values := map[string]string{
-      "objName": args[0],
+    output_dir , _ := os.Getwd()
+    if outputPath != "" {
+      output_dir = filepath.Join(output_dir, outputPath)
     }
 
-    common.ParseTemplate(args[0] + "/spec.yaml", values)
+    templates_dir := filepath.Join(filepath.Join(filepath.Join(filepath.Join(tools.GetConfigDir(), obj[0]), "src"), obj[1]), "templates")
 
-    r, _ := os.Create(args[0] + "/templates/README.txt")
-    r.Write([]byte("Add your template files here\n"))
-    r.Close()
-
-    fmt.Println("New Object Definition: " + args[0])
+    tools.CopyDirectory(templates_dir, output_dir)
   },
 }
 
 func init() {
   objectCmd.AddCommand(createCmd)
+  createCmd.Flags().StringVarP(&outputPath, "output", "o", "", "Output path, will be created if not exists")
 }
