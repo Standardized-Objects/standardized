@@ -17,21 +17,37 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 package cmd
 
 import (
-  "fmt"
   "github.com/spf13/cobra"
+  "gopkg.in/src-d/go-git.v4"
+  "standardized/internal"
+  "io/ioutil"
+  "log"
+  "fmt"
 )
-
-var UpdateAll bool
 
 var updateCmd = &cobra.Command{
   Use:   "update [REPO NAME]",
   Short: "Update objects definitions",
   Run: func(cmd *cobra.Command, args []string) {
-    fmt.Println("update called")
+    config_dir := tools.GetConfigDir()
+
+    files, err := ioutil.ReadDir(config_dir)
+    if err != nil {
+      log.Fatal(err)
+    }
+
+    for _, f := range files {
+      mode := f.Mode()
+      if mode.IsDir() && f.Name()[:1] != "." {
+        fmt.Println("Updating repo: " + f.Name())
+        r, _ := git.PlainOpen(config_dir + "/" + f.Name() + "/src")
+        w, _ := r.Worktree()
+        w.Pull(&git.PullOptions{RemoteName: "origin"})
+      }
+    }
   },
 }
 
 func init() {
   repoCmd.AddCommand(updateCmd)
-  updateCmd.Flags().BoolVarP(&UpdateAll, "all", "a", false, "Update all")
 }
