@@ -42,16 +42,26 @@ var createCmd = &cobra.Command{
     // Split object name into repo and folder
     obj := strings.Split(args[0],"/")
 
-    // Where to output the files
-    output_dir , _ := os.Getwd()
-    if outputPath != "" {
-      output_dir = filepath.Join(output_dir, outputPath)
+    // Copy templates from object definition
+    curr_dir , _ := os.Getwd()
+
+    var obj_dir string
+    if obj[0] == "_local" {
+      obj_dir = filepath.Join(filepath.Join(curr_dir, ".stdized"), obj[1])
+    } else {
+      obj_dir = filepath.Join(filepath.Join(filepath.Join(tools.GetConfigDir(), obj[0]), "src"), obj[1])
     }
 
-    // Copy templates from object definition
-    obj_dir := filepath.Join(filepath.Join(filepath.Join(tools.GetConfigDir(), obj[0]), "src"), obj[1])
     templates_dir := filepath.Join(obj_dir, "templates")
-    tools.CopyDirectory(templates_dir, output_dir)
+
+    var _out string
+    if outputPath != "" {
+      _out =  filepath.Join(curr_dir, outputPath)
+    } else {
+      _out = curr_dir
+    }
+
+    tools.CopyDirectory(templates_dir, _out)
 
     // Read object configuration
     viper.SetConfigType("yaml")
@@ -73,7 +83,7 @@ var createCmd = &cobra.Command{
       config[data.(map[interface{}]interface{})["tag"].(string)] = strings.TrimSuffix(value, "\n")
     }
 
-    wlk_err := filepath.Walk(output_dir,
+    wlk_err := filepath.Walk(_out,
     func(path string, info os.FileInfo, err error) error {
       if err != nil {
         return err

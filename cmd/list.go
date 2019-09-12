@@ -20,14 +20,17 @@ import (
   "fmt"
   "standardized/internal"
   "github.com/spf13/cobra"
+  "path/filepath"
   "io/ioutil"
   "log"
+  "os"
 )
 
 var listCmd = &cobra.Command{
   Use:   "list",
   Short: "List available objects",
   Run: func(cmd *cobra.Command, args []string) {
+    // From saved git repos
     config_dir := tools.GetConfigDir()
 
     files, err := ioutil.ReadDir(config_dir)
@@ -41,6 +44,19 @@ var listCmd = &cobra.Command{
         mode := o.Mode()
         if mode.IsDir() && o.Name()[:1] != "." {
           fmt.Println(f.Name() + "/" + o.Name())
+        }
+      }
+    }
+
+    // From current working dir
+    curr_dir , _ := os.Getwd()
+    local_objs := filepath.Join(curr_dir, ".stdized")
+    if tools.Exists(local_objs){
+      lobjs, _ := ioutil.ReadDir(local_objs)
+      for _, lo := range lobjs {
+        lmode := lo.Mode()
+        if lmode.IsDir() && lo.Name()[:1] != "." {
+          fmt.Println("_local/" + lo.Name())
         }
       }
     }
