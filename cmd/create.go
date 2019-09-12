@@ -36,7 +36,7 @@ var createCmd = &cobra.Command{
   Run: func(cmd *cobra.Command, args []string) {
     if len(args) != 1 {
       fmt.Println("Invalid arguments")
-      os.Exit(1)
+      os.Exit(0)
     }
 
     // Split object name into repo and folder

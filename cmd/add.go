@@ -33,12 +33,12 @@ var addCmd = &cobra.Command{
   Run: func(cmd *cobra.Command, args []string) {
     if len(args) != 2 {
       fmt.Println("Invalid arguments")
-      os.Exit(1)
+      os.Exit(0)
     }
 
     if args[0] == "_local" {
       fmt.Println("Reserved string: _local")
-      os.Exit(1)
+      os.Exit(0)
     }
 
     if sshAuth {
