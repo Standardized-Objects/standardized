@@ -24,7 +24,7 @@ import (
   "os"
   "strings"
   "path/filepath"
-  //"bufio"
+  "bufio"
 )
 
 var outputPath string
@@ -59,18 +59,16 @@ var createCmd = &cobra.Command{
     }
 
     values := viper.Get("values")
-    // var config map[string]string
+    config :=  make(map[string]string, len(values.([]interface{})))
 
     for _, data := range values.([]interface{}) {
-      for _, v := range data.(map[interface{}]interface{}) {
-        switch t := v.(type) {
-        case string, []int:
-          fmt.Println(t)
-        default:
-          fmt.Println("wrong type")
-        }
-      }
+      reader := bufio.NewReader(os.Stdin)
+      fmt.Println(data.(map[interface{}]interface{})["description"])
+      value, _ := reader.ReadString('\n')
+      config[data.(map[interface{}]interface{})["tag"].(string)] = value
     }
+
+    fmt.Println(config)
   },
 }
 
