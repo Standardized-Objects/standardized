@@ -20,6 +20,7 @@ import (
   "fmt"
   "standardized/internal"
   "github.com/spf13/cobra"
+  homedir "github.com/mitchellh/go-homedir"
   "os"
 )
 
@@ -41,9 +42,12 @@ var addCmd = &cobra.Command{
       os.Exit(0)
     }
 
+    home , _ := homedir.Dir()
     if sshAuth {
-      // tools.Clone(tools.RepoInit(args[0],"ssh",sshKey), args[1])
-      fmt.Println("Not yet")
+      if sshKey == "" {
+        sshKey = home + "/.ssh/id_rsa"
+      }
+      tools.Clone(tools.RepoInit(args[0],"ssh",sshKey), args[1])
     } else if githubToken != "" {
       tools.Clone(tools.RepoInit(args[0], "github", githubToken), args[1])
     } else {
@@ -55,6 +59,6 @@ var addCmd = &cobra.Command{
 func init() {
   repoCmd.AddCommand(addCmd)
   addCmd.Flags().BoolVarP(&sshAuth, "ssh", "s", false, "Use SSH for repo auth")
-  addCmd.Flags().StringVarP(&sshKey, "key", "k", "~/.ssh/id_rsa", "SSH private key")
+  addCmd.Flags().StringVarP(&sshKey, "key", "k", "", "SSH private key")
   addCmd.Flags().StringVarP(&githubToken, "token", "t", "", "Use GitHub Personal Access Token for repo auth")
 }

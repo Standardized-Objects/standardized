@@ -19,6 +19,7 @@ package tools
 import (
   "gopkg.in/src-d/go-git.v4"
   "gopkg.in/src-d/go-git.v4/plumbing/transport/http"
+  "gopkg.in/src-d/go-git.v4/plumbing/transport/ssh"
   "github.com/spf13/viper"
   "path/filepath"
   "os"
@@ -70,7 +71,15 @@ func Clone (path string, url string) {
 func GetCloneOptions(path string, url string) git.CloneOptions {
   switch rtype, rauth := ParseRepoAuth(path); rtype {
   case "ssh":
-    fmt.Println("Not yet.")
+    sshAuth, kr := ssh.NewPublicKeysFromFile("git", rauth, "")
+    if kr != nil {
+      log.Fatal(kr)
+    }
+    return git.CloneOptions{
+      URL: url,
+      Auth: sshAuth,
+      Progress: os.Stdout,
+    }
   case "github":
     return git.CloneOptions{
       URL: url,
@@ -88,7 +97,15 @@ func GetCloneOptions(path string, url string) git.CloneOptions {
 func GetPullOptions(path string) git.PullOptions {
   switch rtype, rauth := ParseRepoAuth(path); rtype {
   case "ssh":
-    fmt.Println("Not yet.")
+    sshAuth, kr := ssh.NewPublicKeysFromFile("git", rauth, "")
+    if kr != nil {
+      log.Fatal(kr)
+    }
+    return git.PullOptions{
+      RemoteName: "origin",
+      Auth: sshAuth,
+      Progress: os.Stdout,
+    }
   case "github":
     return git.PullOptions{
       RemoteName: "origin",
