@@ -98,7 +98,7 @@ var createCmd = &cobra.Command{
     })
 
     if wlk_err != nil {
-      log.Println(wlk_err)
+      panic(log.Println(wlk_err))
     }
 
     // Run post create hooks
@@ -108,11 +108,11 @@ var createCmd = &cobra.Command{
       for _, pcscrt := range pc_scripts {
         smode := pcscrt.Mode()
         if !smode.IsDir() && pcscrt.Name()[:1] != "." {
-          log.Printf("Running postcreate hooks....")
+          log.Printf("Running postcreate hook: " + pcscrt.Name())
           cmd := exec.Command(filepath.Join(postcreate_hooks, pcscrt.Name()))
           cmd.Dir = _out
           cmd.Run()
-          log.Printf("Postcreate hooks finished")
+          log.Printf("Done: " + pcscrt.Name())
         }
       }
     }
