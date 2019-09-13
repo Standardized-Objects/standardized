@@ -58,34 +58,31 @@ func ParseRepoAuth(path string) (string, string) {
   return viper.GetString("type"), viper.GetString("value")
 }
 
-func CloneGitHub (path string, url string) {
-  _, token := ParseRepoAuth(path)
-  _, err := git.PlainClone(filepath.Join(path, "src"), false, &git.CloneOptions{
-    // The intended use of a GitHub personal access token is in replace of your password
-    // because access tokens can easily be revoked.
-    // https://help.github.com/articles/creating-a-personal-access-token-for-the-command-line/
-    Auth: &http.BasicAuth{
-      Username: "standardized", // yes, this can be anything except an empty string
-      Password: token,
-    },
-    URL:      url,
-    Progress: os.Stdout,
-  })
+func Clone (path string, url string) {
+  opts := GetCloneOptions(path, url)
+  _, err := git.PlainClone(filepath.Join(path, "src"), false, &opts)
 
   if err != nil {
     log.Fatal(err)
   }
 }
 
-func ClonePublic (path string, url string) {
-  _, err := git.PlainClone(filepath.Join(path, "src"), false, &git.CloneOptions{
-    URL:      url,
-    Progress: os.Stdout,
-  })
-
-  if err != nil {
-    log.Fatal(err)
+func GetCloneOptions(path string, url string) git.CloneOptions {
+  switch rtype, rauth := ParseRepoAuth(path); rtype {
+  case "ssh":
+    fmt.Println("Not yet.")
+  case "github":
+    return git.CloneOptions{
+      URL: url,
+      Auth: &http.BasicAuth{
+        Username: "standardized", // yes, this can be anything except an empty string
+        Password: rauth,
+      },
+      Progress: os.Stdout,
+    }
   }
+
+  return git.CloneOptions{URL: url, Progress: os.Stdout}
 }
 
 func GetPullOptions(path string) git.PullOptions {

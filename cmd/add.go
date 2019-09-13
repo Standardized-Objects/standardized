@@ -42,12 +42,12 @@ var addCmd = &cobra.Command{
     }
 
     if sshAuth {
-      // tools.CloneSSH(tools.RepoInit(args[0],"ssh",sshKey), args[1])
+      // tools.Clone(tools.RepoInit(args[0],"ssh",sshKey), args[1])
       fmt.Println("Not yet")
     } else if githubToken != "" {
-      tools.CloneGitHub(tools.RepoInit(args[0], "github", githubToken), args[1])
+      tools.Clone(tools.RepoInit(args[0], "github", githubToken), args[1])
     } else {
-      tools.ClonePublic(tools.RepoInit(args[0], "pubic", ""), args[1])
+      tools.Clone(tools.RepoInit(args[0], "pubic", ""), args[1])
     }
   },
 }
