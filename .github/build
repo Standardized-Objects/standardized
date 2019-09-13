@@ -1,5 +1,9 @@
 #!/bin/bash
 
+WORKDIR=$(pwd)
+ln -s $WORKDIR $GOPATH/src/standardized
+cd $GOPATH/src/standardized
+
 curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
 dep ensure
-go build .
+go install
