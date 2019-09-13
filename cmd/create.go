@@ -22,6 +22,8 @@ import (
   "github.com/spf13/viper"
   "standardized/internal"
   "os"
+  "os/exec"
+  "io/ioutil"
   "strings"
   "path/filepath"
   "bufio"
@@ -99,7 +101,21 @@ var createCmd = &cobra.Command{
       log.Println(wlk_err)
     }
 
-    // WIP: Run post create hooks
+    // Run post create hooks
+    postcreate_hooks := filepath.Join(obj_dir, "postcreate")
+    if tools.Exists(postcreate_hooks){
+      pc_scripts, _ := ioutil.ReadDir(postcreate_hooks)
+      for _, pcscrt := range pc_scripts {
+        smode := pcscrt.Mode()
+        if !smode.IsDir() && pcscrt.Name()[:1] != "." {
+          log.Printf("Running postcreate hooks....")
+          cmd := exec.Command(filepath.Join(postcreate_hooks, pcscrt.Name()))
+          cmd.Dir = _out
+          cmd.Run()
+          log.Printf("Postcreate hooks finished")
+        }
+      }
+    }
   },
 }
 
