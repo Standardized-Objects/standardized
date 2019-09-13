@@ -88,3 +88,19 @@ func ClonePublic (path string, url string) {
   }
 }
 
+func GetPullOptions(path string) git.PullOptions {
+  switch rtype, rauth := ParseRepoAuth(path); rtype {
+  case "ssh":
+    fmt.Println("Not yet.")
+  case "github":
+    return git.PullOptions{
+      RemoteName: "origin",
+      Auth: &http.BasicAuth{
+        Username: "standardized", // yes, this can be anything except an empty string
+        Password: rauth,
+      },
+      Progress: os.Stdout,
+    }
+  }
+  return git.PullOptions{RemoteName: "origin", Progress: os.Stdout}
+}

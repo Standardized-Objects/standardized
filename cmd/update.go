@@ -20,6 +20,7 @@ import (
   "github.com/spf13/cobra"
   "gopkg.in/src-d/go-git.v4"
   "standardized/internal"
+  "path/filepath"
   "io/ioutil"
   "log"
   "fmt"
@@ -40,9 +41,11 @@ var updateCmd = &cobra.Command{
       mode := f.Mode()
       if mode.IsDir() && f.Name()[:1] != "." {
         fmt.Println("Updating repo: " + f.Name())
-        r, _ := git.PlainOpen(config_dir + "/" + f.Name() + "/src")
+        repo_path := filepath.Join(config_dir, f.Name())
+        r, _ := git.PlainOpen(filepath.Join(repo_path, "src"))
         w, _ := r.Worktree()
-        w.Pull(&git.PullOptions{RemoteName: "origin"})
+        opts := tools.GetPullOptions(repo_path)
+        w.Pull(&opts)
       }
     }
   },
