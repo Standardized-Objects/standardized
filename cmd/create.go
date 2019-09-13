@@ -98,7 +98,7 @@ var createCmd = &cobra.Command{
     })
 
     if wlk_err != nil {
-      panic(fmt.Println(wlk_err))
+      panic(fmt.Errorf(wlk_err))
     }
 
     // Run post create hooks
