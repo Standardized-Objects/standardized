@@ -7,3 +7,4 @@ cd $GOPATH/src/standardized
 curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
 dep ensure
 go install
+cp  $GOPATH/bin/standardized standardized-$OS-$ARCH
