@@ -68,6 +68,7 @@ var createCmd = &cobra.Command{
       _out = curr_dir
     }
 
+    tools.CreateIfNotExists(_out, os.ModePerm)
     tools.CopyDirectory(templates_dir, _out)
 
     // Read object configuration
