@@ -45,6 +45,10 @@ labels:
     color: CC0000
   - name: feature
     color: 336699
+  - name: no-issue-activity
+    color: CCFF00
+  - name: no-pr-activity
+    color: CCFFCC
 
 # Collaborators: give specific users access to this repository.
 collaborators:
