@@ -54,6 +54,11 @@ var createCmd = &cobra.Command{
       obj_dir = filepath.Join(filepath.Join(filepath.Join(tools.GetConfigDir(), obj[0]), "src"), obj[1])
     }
 
+    if !tools.Exists(obj_dir) {
+      fmt.Println("Invalid path: " + obj_dir)
+      os.Exit(0)
+    }
+
     templates_dir := filepath.Join(obj_dir, "templates")
 
     var _out string
