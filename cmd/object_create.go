@@ -87,13 +87,13 @@ var createCmd = &cobra.Command{
     for _, data := range values.([]interface{}) {
       reader := bufio.NewReader(os.Stdin)
 
-      description := data.(map[interface{}]interface{})["description"].(string) + ":"
+      description := data.(map[interface{}]interface{})["description"].(string) + ": "
 
       if _default, ok := data.(map[interface{}]interface{})["default"].(string); ok {
-        description = description + " [" + _default +"]"
+        description = description + " [" + _default +"] "
         config[data.(map[interface{}]interface{})["tag"].(string)] = _default
       }
-      fmt.Println(description)
+      fmt.Print(description)
 
       value, _ := reader.ReadString('\n')
       if len(value) != 1 {
