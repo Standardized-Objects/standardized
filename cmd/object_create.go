@@ -90,13 +90,13 @@ var createCmd = &cobra.Command{
       description := data.(map[interface{}]interface{})["description"].(string) + ": "
 
       if _default, ok := data.(map[interface{}]interface{})["default"].(string); ok {
-        description = description + " [" + _default +"] "
+        description = description + " [" + _default + "] "
         config[data.(map[interface{}]interface{})["tag"].(string)] = _default
       }
       fmt.Print(description)
 
       value, _ := reader.ReadString('\n')
-      if len(value) != 1 {
+      if len(strings.TrimSpace(value)) > 0 {
         config[data.(map[interface{}]interface{})["tag"].(string)] = strings.TrimSuffix(value, "\n")
       }
     }
