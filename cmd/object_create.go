@@ -96,7 +96,7 @@ var createCmd = &cobra.Command{
       fmt.Print(description)
 
       value, _ := reader.ReadString('\n')
-      if len(strings.TrimSpace(value)) != 0 {
+      if len(strings.TrimSpace(value)) > 0 {
         config[data.(map[interface{}]interface{})["tag"].(string)] = strings.TrimSuffix(value, "\n")
       }
     }
