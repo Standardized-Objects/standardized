@@ -17,37 +17,33 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 package cmd
 
 import (
+  "fmt"
   "standardized/internal"
   "github.com/spf13/cobra"
-  "github.com/spf13/viper"
   "path/filepath"
-  "io/ioutil"
-  "log"
-  "fmt"
+  "os"
 )
 
-var repoListCmd = &cobra.Command{
-  Use:   "list",
-  Short: "List available repositories",
+var repoDeleteCmd = &cobra.Command{
+  Use:   "delete [REPO NAME]",
+  Short: "Delete repository",
   Run: func(cmd *cobra.Command, args []string) {
-    config_dir := tools.GetConfigDir()
-
-    files, err := ioutil.ReadDir(config_dir)
-    if err != nil {
-      log.Fatal(err)
+    if len(args) != 1 {
+      fmt.Println("Invalid arguments")
+      os.Exit(0)
     }
 
-    for _, f := range files {
-      viper.SetConfigFile(filepath.Join(config_dir, f.Name()) + "/auth.yaml")
-      err := viper.ReadInConfig()
+    repo_dir := filepath.Join(tools.GetConfigDir(), args[0])
+
+    if tools.Exists(repo_dir){
+      err := os.RemoveAll(repo_dir)
       if err != nil {
-        panic(fmt.Errorf("Fatal error config file: %s \n", err))
+        fmt.Println(err)
       }
-      fmt.Println(f.Name() + " : " + viper.GetString("url"))
     }
   },
 }
 
 func init() {
-  repoCmd.AddCommand(repoListCmd)
+  repoCmd.AddCommand(repoDeleteCmd)
 }
