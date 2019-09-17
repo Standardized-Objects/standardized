@@ -20,6 +20,7 @@ import (
   "fmt"
   "standardized/internal"
   "github.com/spf13/cobra"
+  "github.com/manifoldco/promptui"
   "path/filepath"
   "os"
 )
@@ -36,9 +37,25 @@ var repoDeleteCmd = &cobra.Command{
     repo_dir := filepath.Join(tools.GetConfigDir(), args[0])
 
     if tools.Exists(repo_dir){
-      err := os.RemoveAll(repo_dir)
+
+      prompt := promptui.Prompt{
+        Label:     "Delete repository [" + args[0] + "]",
+        IsConfirm: true,
+      }
+      result, err := prompt.Run()
+
       if err != nil {
-        fmt.Println(err)
+        fmt.Printf("Canceled %v\n", err)
+        return
+      }
+
+      if result == "y" {
+        err := os.RemoveAll(repo_dir)
+        if err != nil {
+          fmt.Println(err)
+        } else {
+          fmt.Println("Repo deleted")
+        }
       }
     }
   },
