@@ -47,11 +47,11 @@ var addCmd = &cobra.Command{
       if sshKey == "" {
         sshKey = home + "/.ssh/id_rsa"
       }
-      tools.Clone(tools.RepoInit(args[0],"ssh",sshKey), args[1])
+      tools.Clone(tools.RepoInit(args[0],"ssh",sshKey, args[1]))
     } else if githubToken != "" {
-      tools.Clone(tools.RepoInit(args[0], "github", githubToken), args[1])
+      tools.Clone(tools.RepoInit(args[0], "github", githubToken, args[1]))
     } else {
-      tools.Clone(tools.RepoInit(args[0], "pubic", ""), args[1])
+      tools.Clone(tools.RepoInit(args[0], "pubic", "", args[1]))
     }
   },
 }
