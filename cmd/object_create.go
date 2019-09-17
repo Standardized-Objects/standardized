@@ -21,12 +21,12 @@ import (
   "github.com/spf13/cobra"
   "github.com/spf13/viper"
   "standardized/internal"
+  "github.com/manifoldco/promptui"
   "os"
   "os/exec"
   "io/ioutil"
   "strings"
   "path/filepath"
-  "bufio"
   "log"
 )
 
@@ -42,7 +42,11 @@ var createCmd = &cobra.Command{
     }
 
     // Split object name into repo and folder
-    obj := strings.Split(args[0],"/")
+    obj := strings.Split(args[0], "/")
+    if len(obj) != 2 {
+      fmt.Println("Invalid Object Definition : " + args[0])
+      os.Exit(0)
+    }
 
     // Copy templates from object definition
     curr_dir , _ := os.Getwd()
@@ -85,20 +89,23 @@ var createCmd = &cobra.Command{
     config :=  make(map[string]string, len(values.([]interface{})))
 
     for _, data := range values.([]interface{}) {
-      reader := bufio.NewReader(os.Stdin)
 
-      description := data.(map[interface{}]interface{})["description"].(string) + ": "
+      prompt := promptui.Prompt{
+        Label:    data.(map[interface{}]interface{})["description"].(string),
+      }
 
       if _default, ok := data.(map[interface{}]interface{})["default"].(string); ok {
-        description = description + " [" + _default + "] "
-        config[data.(map[interface{}]interface{})["tag"].(string)] = _default
+        prompt.Default =  _default
       }
-      fmt.Print(description)
 
-      value, _ := reader.ReadString('\n')
-      if len(strings.TrimSpace(value)) > 0 {
-        config[data.(map[interface{}]interface{})["tag"].(string)] = strings.TrimSuffix(value, "\n")
+      result, err := prompt.Run()
+
+      if err != nil {
+        fmt.Printf("Fail %v\n", err)
+        return
       }
+
+      config[data.(map[interface{}]interface{})["tag"].(string)] = result
     }
 
     wlk_err := filepath.Walk(_out,
