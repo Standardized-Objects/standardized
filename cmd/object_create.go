@@ -73,6 +73,23 @@ var createCmd = &cobra.Command{
     }
 
     tools.CreateIfNotExists(_out, os.ModePerm)
+
+    // Run post create hooks
+    precreate_hooks := filepath.Join(obj_dir, "precreate")
+    if tools.Exists(precreate_hooks){
+      prc_scripts, _ := ioutil.ReadDir(precreate_hooks)
+      for _, prcscrt := range prc_scripts {
+        psmode := prcscrt.Mode()
+        if !psmode.IsDir() && prcscrt.Name()[:1] != "." {
+          log.Printf("Running precreate hook: " + prcscrt.Name())
+          cmd := exec.Command(filepath.Join(precreate_hooks, prcscrt.Name()))
+          cmd.Dir = _out
+          cmd.Run()
+          log.Printf("Done: " + prcscrt.Name())
+        }
+      }
+    }
+
     tools.CopyDirectory(templates_dir, _out)
 
     // Read object configuration
