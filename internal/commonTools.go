@@ -17,65 +17,65 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 package tools
 
 import (
-  "fmt"
-  "os"
-  "html/template"
-  "path/filepath"
-  "log"
-  "io/ioutil"
-  "os/exec"
-  homedir "github.com/mitchellh/go-homedir"
+	"fmt"
+	homedir "github.com/mitchellh/go-homedir"
+	"html/template"
+	"io/ioutil"
+	"log"
+	"os"
+	"os/exec"
+	"path/filepath"
 )
 
 func GetConfigDir() string {
-  home, err := homedir.Dir()
-  if err != nil {
-    fmt.Println(err)
-    os.Exit(1)
-  }
+	home, err := homedir.Dir()
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
 
-  conf_dir := filepath.Join(home, ".standardize")
+	conf_dir := filepath.Join(home, ".standardize")
 
-  if _, err := os.Stat(conf_dir); os.IsNotExist(err) {
-    os.Mkdir(conf_dir, os.ModePerm)
-  }
+	if _, err := os.Stat(conf_dir); os.IsNotExist(err) {
+		os.Mkdir(conf_dir, os.ModePerm)
+	}
 
-  return conf_dir
+	return conf_dir
 }
 
 func ParseTemplate(path string, values map[string]string) {
-  t, err := template.ParseFiles(path)
-  if err != nil {
-    log.Print(err)
-    return
-  }
+	t, err := template.ParseFiles(path)
+	if err != nil {
+		log.Print(err)
+		return
+	}
 
-  f, err := os.Create(path)
-  if err != nil {
-    log.Println("create file: ", err)
-    return
-  }
+	f, err := os.Create(path)
+	if err != nil {
+		log.Println("create file: ", err)
+		return
+	}
 
-  err = t.Execute(f, values)
-  if err != nil {
-    log.Print("execute: ", err)
-    return
-  }
-  f.Close()
+	err = t.Execute(f, values)
+	if err != nil {
+		log.Print("execute: ", err)
+		return
+	}
+	f.Close()
 }
 
 func RunHooks(path string, outdir string) {
-  if Exists(path){
-    scripts, _ := ioutil.ReadDir(path)
-    for _, scpt := range scripts {
-      mode := scpt.Mode()
-      if !mode.IsDir() && scpt.Name()[:1] != "." {
-        log.Printf("Running hook: " + scpt.Name())
-        cmd := exec.Command(filepath.Join(path, scpt.Name()))
-        cmd.Dir = outdir
-        cmd.Run()
-        log.Printf("Done: " + scpt.Name())
-      }
-    }
-  }
+	if Exists(path) {
+		scripts, _ := ioutil.ReadDir(path)
+		for _, scpt := range scripts {
+			mode := scpt.Mode()
+			if !mode.IsDir() && scpt.Name()[:1] != "." {
+				log.Printf("Running hook: " + scpt.Name())
+				cmd := exec.Command(filepath.Join(path, scpt.Name()))
+				cmd.Dir = outdir
+				cmd.Run()
+				log.Printf("Done: " + scpt.Name())
+			}
+		}
+	}
 }

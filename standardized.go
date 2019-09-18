@@ -19,5 +19,5 @@ package main
 import "standardized/cmd"
 
 func main() {
-  cmd.Execute()
+	cmd.Execute()
 }

@@ -17,50 +17,50 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 package cmd
 
 import (
-  "fmt"
-  "standardized/internal"
-  "github.com/spf13/cobra"
-  "github.com/manifoldco/promptui"
-  "path/filepath"
-  "os"
+	"fmt"
+	"github.com/manifoldco/promptui"
+	"github.com/spf13/cobra"
+	"os"
+	"path/filepath"
+	"standardized/internal"
 )
 
 var repoDeleteCmd = &cobra.Command{
-  Use:   "delete [REPO NAME]",
-  Short: "Delete repository",
-  Run: func(cmd *cobra.Command, args []string) {
-    if len(args) != 1 {
-      fmt.Println("Invalid arguments")
-      os.Exit(0)
-    }
+	Use:   "delete [REPO NAME]",
+	Short: "Delete repository",
+	Run: func(cmd *cobra.Command, args []string) {
+		if len(args) != 1 {
+			fmt.Println("Invalid arguments")
+			os.Exit(0)
+		}
 
-    repo_dir := filepath.Join(tools.GetConfigDir(), args[0])
+		repo_dir := filepath.Join(tools.GetConfigDir(), args[0])
 
-    if tools.Exists(repo_dir){
+		if tools.Exists(repo_dir) {
 
-      prompt := promptui.Prompt{
-        Label:     "Delete repository [" + args[0] + "]",
-        IsConfirm: true,
-      }
-      result, err := prompt.Run()
+			prompt := promptui.Prompt{
+				Label:     "Delete repository [" + args[0] + "]",
+				IsConfirm: true,
+			}
+			result, err := prompt.Run()
 
-      if err != nil {
-        fmt.Printf("Canceled %v\n", err)
-        return
-      }
+			if err != nil {
+				fmt.Printf("Canceled %v\n", err)
+				return
+			}
 
-      if result == "y" {
-        err := os.RemoveAll(repo_dir)
-        if err != nil {
-          fmt.Println(err)
-        } else {
-          fmt.Println("Repo deleted")
-        }
-      }
-    }
-  },
+			if result == "y" {
+				err := os.RemoveAll(repo_dir)
+				if err != nil {
+					fmt.Println(err)
+				} else {
+					fmt.Println("Repo deleted")
+				}
+			}
+		}
+	},
 }
 
 func init() {
-  repoCmd.AddCommand(repoDeleteCmd)
+	repoCmd.AddCommand(repoDeleteCmd)
 }

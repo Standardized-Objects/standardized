@@ -17,14 +17,14 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 package cmd
 
 import (
-  "github.com/spf13/cobra"
+	"github.com/spf13/cobra"
 )
 
 var objectCmd = &cobra.Command{
-  Use:   "object",
-  Short: "List and create Objects",
+	Use:   "object",
+	Short: "List and create Objects",
 }
 
 func init() {
-  rootCmd.AddCommand(objectCmd)
+	rootCmd.AddCommand(objectCmd)
 }
