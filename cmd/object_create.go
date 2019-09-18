@@ -23,8 +23,6 @@ import (
   "standardized/internal"
   "github.com/manifoldco/promptui"
   "os"
-  "os/exec"
-  "io/ioutil"
   "strings"
   "path/filepath"
   "log"
@@ -74,22 +72,8 @@ var createCmd = &cobra.Command{
 
     tools.CreateIfNotExists(_out, os.ModePerm)
 
-    // Run post create hooks
-    precreate_hooks := filepath.Join(obj_dir, "precreate")
-    if tools.Exists(precreate_hooks){
-      prc_scripts, _ := ioutil.ReadDir(precreate_hooks)
-      for _, prcscrt := range prc_scripts {
-        psmode := prcscrt.Mode()
-        if !psmode.IsDir() && prcscrt.Name()[:1] != "." {
-          log.Printf("Running precreate hook: " + prcscrt.Name())
-          cmd := exec.Command(filepath.Join(precreate_hooks, prcscrt.Name()))
-          cmd.Dir = _out
-          cmd.Run()
-          log.Printf("Done: " + prcscrt.Name())
-        }
-      }
-    }
-
+    // Run pre create hooks
+    tools.RunHooks(filepath.Join(obj_dir, "precreate"), _out)
     tools.CopyDirectory(templates_dir, _out)
 
     // Read object configuration
@@ -143,20 +127,7 @@ var createCmd = &cobra.Command{
     }
 
     // Run post create hooks
-    postcreate_hooks := filepath.Join(obj_dir, "postcreate")
-    if tools.Exists(postcreate_hooks){
-      pc_scripts, _ := ioutil.ReadDir(postcreate_hooks)
-      for _, pcscrt := range pc_scripts {
-        smode := pcscrt.Mode()
-        if !smode.IsDir() && pcscrt.Name()[:1] != "." {
-          log.Printf("Running postcreate hook: " + pcscrt.Name())
-          cmd := exec.Command(filepath.Join(postcreate_hooks, pcscrt.Name()))
-          cmd.Dir = _out
-          cmd.Run()
-          log.Printf("Done: " + pcscrt.Name())
-        }
-      }
-    }
+    tools.RunHooks(filepath.Join(obj_dir, "postreate"), _out)
   },
 }
 

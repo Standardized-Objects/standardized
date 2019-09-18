@@ -22,6 +22,8 @@ import (
   "html/template"
   "path/filepath"
   "log"
+  "io/ioutil"
+  "os/exec"
   homedir "github.com/mitchellh/go-homedir"
 )
 
@@ -60,4 +62,20 @@ func ParseTemplate(path string, values map[string]string) {
     return
   }
   f.Close()
+}
+
+func RunHooks(path string, outdir string) {
+  if Exists(path){
+    scripts, _ := ioutil.ReadDir(path)
+    for _, scpt := range scripts {
+      mode := scpt.Mode()
+      if !mode.IsDir() && scpt.Name()[:1] != "." {
+        log.Printf("Running hook: " + scpt.Name())
+        cmd := exec.Command(filepath.Join(path, scpt.Name()))
+        cmd.Dir = outdir
+        cmd.Run()
+        log.Printf("Done: " + scpt.Name())
+      }
+    }
+  }
 }
