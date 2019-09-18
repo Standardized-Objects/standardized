@@ -98,26 +98,21 @@ func GetCloneOptions(path string) git.CloneOptions {
 }
 
 func GetPullOptions(path string) git.PullOptions {
+  options := git.PullOptions{RemoteName: "origin", Progress: os.Stdout}
+
   switch rtype, rauth, _ := ParseRepoAuth(path); rtype {
   case "ssh":
     sshAuth, kr := ssh.NewPublicKeysFromFile("git", rauth, "")
     if kr != nil {
       log.Fatal(kr)
     }
-    return git.PullOptions{
-      RemoteName: "origin",
-      Auth: sshAuth,
-      Progress: os.Stdout,
-    }
+    options.Auth = sshAuth
   case "github":
-    return git.PullOptions{
-      RemoteName: "origin",
-      Auth: &http.BasicAuth{
-        Username: "standardized", // yes, this can be anything except an empty string
-        Password: rauth,
-      },
-      Progress: os.Stdout,
+    options.Auth = &http.BasicAuth{
+      Username: "standardized",
+      Password: rauth,
     }
   }
-  return git.PullOptions{RemoteName: "origin", Progress: os.Stdout}
+
+  return options
 }
