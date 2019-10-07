@@ -29,9 +29,9 @@ var updateCmd = &cobra.Command{
 	Short: "Update objects definitions",
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) == 1 {
-			fmt.Println("Updating repo: " + args[0])
 			r := tools.ObjRepo{Name: args[0]}
 			r.Load()
+			fmt.Println("Updating", r.Name, ":", r.Url)
 			r.Update()
 		} else {
 			config_dir := tools.GetConfigDir()
@@ -44,9 +44,9 @@ var updateCmd = &cobra.Command{
 			for _, f := range files {
 				mode := f.Mode()
 				if mode.IsDir() && f.Name()[:1] != "." {
-					fmt.Println("Updating repo: " + f.Name())
 					r := tools.ObjRepo{Name: f.Name()}
 					r.Load()
+					fmt.Println("Updating", r.Name, ":", r.Url)
 					r.Update()
 				}
 			}
