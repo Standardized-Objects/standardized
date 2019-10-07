@@ -63,7 +63,6 @@ var addCmd = &cobra.Command{
 		}
 
 		r.Init()
-		r.Clone()
 	},
 }
 

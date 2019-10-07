@@ -37,7 +37,6 @@ type ObjRepo struct {
 }
 
 func (r *ObjRepo) Init() {
-
 	r.Path = filepath.Join(GetConfigDir(), r.Name)
 
 	if _, err := os.Stat(r.Path); os.IsNotExist(err) {
@@ -48,6 +47,18 @@ func (r *ObjRepo) Init() {
 	viper.Set("value", r.AuthValue)
 	viper.Set("url", r.Url)
 	viper.WriteConfigAs(filepath.Join(r.Path, "auth.yaml"))
+
+	opts := git.CloneOptions{
+		URL:      r.Url,
+		Progress: os.Stdout,
+		Auth:     r.getAuth(),
+	}
+
+	_, err := git.PlainClone(filepath.Join(r.Path, "src"), false, &opts)
+
+	if err != nil {
+		log.Fatal(err)
+	}
 }
 
 func (r *ObjRepo) Load() {
@@ -61,20 +72,6 @@ func (r *ObjRepo) Load() {
 	r.AuthType = viper.GetString("type")
 	r.AuthValue = viper.GetString("value")
 	r.Url = viper.GetString("url")
-}
-
-func (r *ObjRepo) Clone() {
-	opts := git.CloneOptions{
-		URL:      r.Url,
-		Progress: os.Stdout,
-		Auth:     r.getAuth(),
-	}
-
-	_, err := git.PlainClone(filepath.Join(r.Path, "src"), false, &opts)
-
-	if err != nil {
-		log.Fatal(err)
-	}
 }
 
 func (r *ObjRepo) Update() {
