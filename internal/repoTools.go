@@ -65,10 +65,10 @@ func (r *ObjRepo) Load() {
 
 func (r *ObjRepo) Clone() {
 	opts := git.CloneOptions{
-    URL: r.Url,
-    Progress: os.Stdout,
-    Auth: r.getAuth(),
-  }
+		URL:      r.Url,
+		Progress: os.Stdout,
+		Auth:     r.getAuth(),
+	}
 
 	_, err := git.PlainClone(filepath.Join(r.Path, "src"), false, &opts)
 
@@ -81,10 +81,10 @@ func (r *ObjRepo) Update() {
 	g, _ := git.PlainOpen(filepath.Join(r.Path, "src"))
 	w, _ := g.Worktree()
 	opts := git.PullOptions{
-    RemoteName: "origin",
-    Progress: os.Stdout,
-    Auth: r.getAuth(),
-  }
+		RemoteName: "origin",
+		Progress:   os.Stdout,
+		Auth:       r.getAuth(),
+	}
 	w.Pull(&opts)
 }
 
@@ -102,5 +102,5 @@ func (r *ObjRepo) getAuth() transport.AuthMethod {
 			Password: r.AuthValue,
 		}
 	}
-  return nil
+	return nil
 }
