@@ -43,17 +43,10 @@ func (r *ObjRepo) Start() {
 		os.Mkdir(r.Path, os.ModePerm)
 	}
 
-	f, _ := os.Create(filepath.Join(r.Path, "auth.yaml"))
-	f.Write([]byte("type: {{.auth_type}}\nvalue: {{.auth_value}}\nurl: {{ .repo_url }}\n"))
-	f.Close()
-
-	config := map[string]string{
-		"auth_type":  r.AuthType,
-		"auth_value": r.AuthValue,
-		"repo_url":   r.Url,
-	}
-
-	ParseTemplate(filepath.Join(r.Path, "auth.yaml"), config)
+	viper.Set("type", r.AuthType)
+	viper.Set("value", r.AuthValue)
+	viper.Set("url", r.Url)
+	viper.WriteConfigAs(filepath.Join(r.Path, "auth.yaml"))
 }
 
 func (r *ObjRepo) Load() {

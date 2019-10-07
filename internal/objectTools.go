@@ -20,6 +20,7 @@ import (
 	"fmt"
 	"github.com/manifoldco/promptui"
 	"github.com/spf13/viper"
+	"html/template"
 	"io/ioutil"
 	"log"
 	"os"
@@ -107,7 +108,22 @@ func (o *ObjDef) Apply() {
 			}
 
 			if !info.IsDir() {
-				ParseTemplate(path, config)
+				t, err := template.ParseFiles(path)
+				if err != nil {
+					log.Fatal(err)
+				}
+
+				f, err := os.Create(path)
+				if err != nil {
+					log.Fatal("create file: ", err)
+				}
+
+				err = t.Execute(f, config)
+				if err != nil {
+					log.Fatal("execute: ", err)
+				}
+				f.Close()
+
 			}
 			return nil
 		})
