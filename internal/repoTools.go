@@ -27,92 +27,90 @@ import (
 	"path/filepath"
 )
 
-func RepoInit(name string, auth_type string, auth_value string, url string) string {
-	repo_path := filepath.Join(GetConfigDir(), name)
+type ObjRepo struct {
+	Path      string
+	AuthType  string
+	AuthValue string
+	Url       string
+	Name      string
+}
 
-	if _, err := os.Stat(repo_path); os.IsNotExist(err) {
-		os.Mkdir(repo_path, os.ModePerm)
+func (r *ObjRepo) Start() {
+
+	r.Path = filepath.Join(GetConfigDir(), r.Name)
+
+	if _, err := os.Stat(r.Path); os.IsNotExist(err) {
+		os.Mkdir(r.Path, os.ModePerm)
 	}
 
-	f, _ := os.Create(repo_path + "/auth.yaml")
+	f, _ := os.Create(filepath.Join(r.Path, "auth.yaml"))
 	f.Write([]byte("type: {{.auth_type}}\nvalue: {{.auth_value}}\nurl: {{ .repo_url }}\n"))
 	f.Close()
 
 	config := map[string]string{
-		"auth_type":  auth_type,
-		"auth_value": auth_value,
-		"repo_url":   url,
+		"auth_type":  r.AuthType,
+		"auth_value": r.AuthValue,
+		"repo_url":   r.Url,
 	}
-	ParseTemplate(repo_path+"/auth.yaml", config)
 
-	return repo_path
+	ParseTemplate(filepath.Join(r.Path, "auth.yaml"), config)
 }
 
-func ParseRepoAuth(path string) (string, string, string) {
-	viper.SetConfigType("yaml")
-	viper.SetConfigName("auth")
-	viper.AddConfigPath(path)
+func (r *ObjRepo) Load() {
+	r.Path = filepath.Join(GetConfigDir(), r.Name)
+	viper.SetConfigFile(filepath.Join(r.Path, "auth.yaml"))
 	err := viper.ReadInConfig()
 	if err != nil {
 		panic(fmt.Errorf("Fatal error config file: %s \n", err))
 	}
 
-	return viper.GetString("type"), viper.GetString("value"), viper.GetString("url")
+	r.AuthType = viper.GetString("type")
+	r.AuthValue = viper.GetString("value")
+	r.Url = viper.GetString("url")
 }
 
-func Clone(path string) {
-	opts := GetCloneOptions(path)
-	_, err := git.PlainClone(filepath.Join(path, "src"), false, &opts)
+func (r *ObjRepo) Clone() {
+	opts := git.CloneOptions{URL: r.Url, Progress: os.Stdout}
+
+	switch r.AuthType {
+	case "ssh":
+		sshAuth, kr := ssh.NewPublicKeysFromFile("git", r.AuthValue, "")
+		if kr != nil {
+			log.Fatal(kr)
+		}
+		opts.Auth = sshAuth
+	case "github":
+		opts.Auth = &http.BasicAuth{
+			Username: "standardized", // yes, this can be anything except an empty string
+			Password: r.AuthValue,
+		}
+	}
+
+	_, err := git.PlainClone(filepath.Join(r.Path, "src"), false, &opts)
 
 	if err != nil {
 		log.Fatal(err)
 	}
 }
 
-func GetCloneOptions(path string) git.CloneOptions {
-	var rtype, rauth, rurl string
+func (r *ObjRepo) Update() {
+	g, _ := git.PlainOpen(filepath.Join(r.Path, "src"))
+	w, _ := g.Worktree()
+	opts := git.PullOptions{RemoteName: "origin", Progress: os.Stdout}
 
-	switch rtype, rauth, rurl = ParseRepoAuth(path); rtype {
+	switch r.AuthType {
 	case "ssh":
-		sshAuth, kr := ssh.NewPublicKeysFromFile("git", rauth, "")
+		sshAuth, kr := ssh.NewPublicKeysFromFile("git", r.AuthValue, "")
 		if kr != nil {
 			log.Fatal(kr)
 		}
-		return git.CloneOptions{
-			URL:      rurl,
-			Auth:     sshAuth,
-			Progress: os.Stdout,
-		}
+		opts.Auth = sshAuth
 	case "github":
-		return git.CloneOptions{
-			URL: rurl,
-			Auth: &http.BasicAuth{
-				Username: "standardized", // yes, this can be anything except an empty string
-				Password: rauth,
-			},
-			Progress: os.Stdout,
+		opts.Auth = &http.BasicAuth{
+			Username: "standardized", // yes, this can be anything except an empty string
+			Password: r.AuthValue,
 		}
 	}
 
-	return git.CloneOptions{URL: rurl, Progress: os.Stdout}
-}
-
-func GetPullOptions(path string) git.PullOptions {
-	options := git.PullOptions{RemoteName: "origin", Progress: os.Stdout}
-
-	switch rtype, rauth, _ := ParseRepoAuth(path); rtype {
-	case "ssh":
-		sshAuth, kr := ssh.NewPublicKeysFromFile("git", rauth, "")
-		if kr != nil {
-			log.Fatal(kr)
-		}
-		options.Auth = sshAuth
-	case "github":
-		options.Auth = &http.BasicAuth{
-			Username: "standardized",
-			Password: rauth,
-		}
-	}
-
-	return options
+	w.Pull(&opts)
 }

@@ -42,17 +42,28 @@ var addCmd = &cobra.Command{
 			os.Exit(0)
 		}
 
+		r := tools.ObjRepo{
+			Name: args[0],
+			Url:  args[1],
+		}
+
 		home, _ := homedir.Dir()
 		if sshAuth {
 			if sshKey == "" {
 				sshKey = home + "/.ssh/id_rsa"
 			}
-			tools.Clone(tools.RepoInit(args[0], "ssh", sshKey, args[1]))
+			r.AuthType = "ssh"
+			r.AuthValue = sshKey
 		} else if githubToken != "" {
-			tools.Clone(tools.RepoInit(args[0], "github", githubToken, args[1]))
+			r.AuthType = "github"
+			r.AuthValue = githubToken
 		} else {
-			tools.Clone(tools.RepoInit(args[0], "pubic", "", args[1]))
+			r.AuthType = "public"
+			r.AuthValue = ""
 		}
+
+		r.Start()
+		r.Clone()
 	},
 }
 

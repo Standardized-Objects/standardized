@@ -19,10 +19,8 @@ package cmd
 import (
 	"fmt"
 	"github.com/spf13/cobra"
-	"gopkg.in/src-d/go-git.v4"
 	"io/ioutil"
 	"log"
-	"path/filepath"
 	"standardized/internal"
 )
 
@@ -30,22 +28,27 @@ var updateCmd = &cobra.Command{
 	Use:   "update [REPO NAME]",
 	Short: "Update objects definitions",
 	Run: func(cmd *cobra.Command, args []string) {
-		config_dir := tools.GetConfigDir()
+		if len(args) == 1 {
+			fmt.Println("Updating repo: " + args[0])
+			r := tools.ObjRepo{Name: args[0]}
+			r.Load()
+			r.Update()
+		} else {
+			config_dir := tools.GetConfigDir()
 
-		files, err := ioutil.ReadDir(config_dir)
-		if err != nil {
-			log.Fatal(err)
-		}
+			files, err := ioutil.ReadDir(config_dir)
+			if err != nil {
+				log.Fatal(err)
+			}
 
-		for _, f := range files {
-			mode := f.Mode()
-			if mode.IsDir() && f.Name()[:1] != "." {
-				fmt.Println("Updating repo: " + f.Name())
-				repo_path := filepath.Join(config_dir, f.Name())
-				r, _ := git.PlainOpen(filepath.Join(repo_path, "src"))
-				w, _ := r.Worktree()
-				opts := tools.GetPullOptions(repo_path)
-				w.Pull(&opts)
+			for _, f := range files {
+				mode := f.Mode()
+				if mode.IsDir() && f.Name()[:1] != "." {
+					fmt.Println("Updating repo: " + f.Name())
+					r := tools.ObjRepo{Name: f.Name()}
+					r.Load()
+					r.Update()
+				}
 			}
 		}
 	},
