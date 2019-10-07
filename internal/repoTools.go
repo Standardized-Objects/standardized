@@ -20,6 +20,7 @@ import (
 	"fmt"
 	"github.com/spf13/viper"
 	"gopkg.in/src-d/go-git.v4"
+	"gopkg.in/src-d/go-git.v4/plumbing/transport"
 	"gopkg.in/src-d/go-git.v4/plumbing/transport/http"
 	"gopkg.in/src-d/go-git.v4/plumbing/transport/ssh"
 	"log"
@@ -63,21 +64,11 @@ func (r *ObjRepo) Load() {
 }
 
 func (r *ObjRepo) Clone() {
-	opts := git.CloneOptions{URL: r.Url, Progress: os.Stdout}
-
-	switch r.AuthType {
-	case "ssh":
-		sshAuth, kr := ssh.NewPublicKeysFromFile("git", r.AuthValue, "")
-		if kr != nil {
-			log.Fatal(kr)
-		}
-		opts.Auth = sshAuth
-	case "github":
-		opts.Auth = &http.BasicAuth{
-			Username: "standardized", // yes, this can be anything except an empty string
-			Password: r.AuthValue,
-		}
-	}
+	opts := git.CloneOptions{
+    URL: r.Url,
+    Progress: os.Stdout,
+    Auth: r.getAuth(),
+  }
 
 	_, err := git.PlainClone(filepath.Join(r.Path, "src"), false, &opts)
 
@@ -89,21 +80,27 @@ func (r *ObjRepo) Clone() {
 func (r *ObjRepo) Update() {
 	g, _ := git.PlainOpen(filepath.Join(r.Path, "src"))
 	w, _ := g.Worktree()
-	opts := git.PullOptions{RemoteName: "origin", Progress: os.Stdout}
+	opts := git.PullOptions{
+    RemoteName: "origin",
+    Progress: os.Stdout,
+    Auth: r.getAuth(),
+  }
+	w.Pull(&opts)
+}
 
+func (r *ObjRepo) getAuth() transport.AuthMethod {
 	switch r.AuthType {
 	case "ssh":
 		sshAuth, kr := ssh.NewPublicKeysFromFile("git", r.AuthValue, "")
 		if kr != nil {
 			log.Fatal(kr)
 		}
-		opts.Auth = sshAuth
+		return sshAuth
 	case "github":
-		opts.Auth = &http.BasicAuth{
+		return &http.BasicAuth{
 			Username: "standardized", // yes, this can be anything except an empty string
 			Password: r.AuthValue,
 		}
 	}
-
-	w.Pull(&opts)
+  return nil
 }
