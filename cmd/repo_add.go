@@ -62,7 +62,7 @@ var addCmd = &cobra.Command{
 			r.AuthValue = ""
 		}
 
-		r.Start()
+		r.Init()
 		r.Clone()
 	},
 }

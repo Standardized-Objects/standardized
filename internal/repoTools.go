@@ -36,7 +36,7 @@ type ObjRepo struct {
 	Name      string
 }
 
-func (r *ObjRepo) Start() {
+func (r *ObjRepo) Init() {
 
 	r.Path = filepath.Join(GetConfigDir(), r.Name)
 
