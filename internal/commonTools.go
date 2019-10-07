@@ -17,31 +17,10 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 package tools
 
 import (
-	"fmt"
-	homedir "github.com/mitchellh/go-homedir"
 	"html/template"
-	"io/ioutil"
 	"log"
 	"os"
-	"os/exec"
-	"path/filepath"
 )
-
-func GetConfigDir() string {
-	home, err := homedir.Dir()
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
-
-	conf_dir := filepath.Join(home, ".standardize")
-
-	if _, err := os.Stat(conf_dir); os.IsNotExist(err) {
-		os.Mkdir(conf_dir, os.ModePerm)
-	}
-
-	return conf_dir
-}
 
 func ParseTemplate(path string, values map[string]string) {
 	t, err := template.ParseFiles(path)
@@ -62,20 +41,4 @@ func ParseTemplate(path string, values map[string]string) {
 		return
 	}
 	f.Close()
-}
-
-func RunHooks(path string, outdir string) {
-	if Exists(path) {
-		scripts, _ := ioutil.ReadDir(path)
-		for _, scpt := range scripts {
-			mode := scpt.Mode()
-			if !mode.IsDir() && scpt.Name()[:1] != "." {
-				log.Printf("Running hook: " + scpt.Name())
-				cmd := exec.Command(filepath.Join(path, scpt.Name()))
-				cmd.Dir = outdir
-				cmd.Run()
-				log.Printf("Done: " + scpt.Name())
-			}
-		}
-	}
 }
