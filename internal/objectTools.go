@@ -46,9 +46,9 @@ func (o *ObjDef) Load() {
 
 	curr_dir, _ := os.Getwd()
 	if obj[0] == "_local" {
-		o.Path = filepath.Join(filepath.Join(curr_dir, ".stdized"), obj[1])
+		o.Path = filepath.Join(curr_dir, ".stdized", obj[1])
 	} else {
-		o.Path = filepath.Join(filepath.Join(filepath.Join(GetConfigDir(), obj[0]), "src"), obj[1])
+		o.Path = filepath.Join(GetConfigDir(), obj[0], "src", obj[1])
 	}
 
 	if o.OutDir != "_current_dir_" {

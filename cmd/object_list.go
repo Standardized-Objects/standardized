@@ -39,11 +39,11 @@ var listCmd = &cobra.Command{
 		}
 
 		for _, f := range files {
-			objs, _ := ioutil.ReadDir(config_dir + "/" + f.Name() + "/src")
+			objs, _ := ioutil.ReadDir(filepath.Join(config_dir, f.Name(), "src"))
 			for _, o := range objs {
 				mode := o.Mode()
 				if mode.IsDir() && o.Name()[:1] != "." {
-					fmt.Println(f.Name() + "/" + o.Name())
+					fmt.Println(filepath.Join(f.Name(), o.Name()))
 				}
 			}
 		}
@@ -56,7 +56,7 @@ var listCmd = &cobra.Command{
 			for _, lo := range lobjs {
 				lmode := lo.Mode()
 				if lmode.IsDir() && lo.Name()[:1] != "." {
-					fmt.Println("_local/" + lo.Name())
+					fmt.Println(filepath.Join("_local", lo.Name()))
 				}
 			}
 		}

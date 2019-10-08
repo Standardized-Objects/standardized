@@ -38,7 +38,7 @@ var repoListCmd = &cobra.Command{
 		}
 
 		for _, f := range files {
-			viper.SetConfigFile(filepath.Join(config_dir, f.Name()) + "/auth.yaml")
+			viper.SetConfigFile(filepath.Join(config_dir, f.Name(), "auth.yaml"))
 			err := viper.ReadInConfig()
 			if err != nil {
 				panic(fmt.Errorf("Fatal error config file: %s \n", err))

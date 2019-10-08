@@ -22,6 +22,7 @@ import (
 	"github.com/spf13/cobra"
 	"os"
 	"standardized/internal"
+  "path/filepath"
 )
 
 var sshAuth bool
@@ -50,7 +51,7 @@ var addCmd = &cobra.Command{
 		home, _ := homedir.Dir()
 		if sshAuth {
 			if sshKey == "" {
-				sshKey = home + "/.ssh/id_rsa"
+				sshKey = filepath.Join(home, ".ssh", "id_rsa")
 			}
 			r.AuthType = "ssh"
 			r.AuthValue = sshKey
