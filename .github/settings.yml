@@ -8,7 +8,7 @@ repository:
   description: Standardized CLI
 
   # A URL with more information about the repository
-  # homepage: https://example.github.io/
+  homepage: https://standardized-objects.github.io/
 
   # Either `true` to make the repository private, or `false` to make it public.
   private: false
@@ -17,7 +17,7 @@ repository:
   has_issues: true
 
   # Either `true` to enable the wiki for this repository, `false` to disable it.
-  has_wiki: true
+  has_wiki: false
 
   # Either `true` to enable downloads for this repository, `false` to disable them.
   has_downloads: false
@@ -49,6 +49,10 @@ labels:
     color: CCFF00
   - name: no-pr-activity
     color: CCFFCC
+  - name: breaking
+    color: FFCCFF
+  - name: enhancement
+    color: CC1111
 
 # Collaborators: give specific users access to this repository.
 collaborators:
