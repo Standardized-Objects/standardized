@@ -20,7 +20,7 @@ import (
 	"fmt"
 	"github.com/manifoldco/promptui"
 	"github.com/spf13/viper"
-	"html/template"
+	"text/template"
 	"io/ioutil"
 	"log"
 	"os"
