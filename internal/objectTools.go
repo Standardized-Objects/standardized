@@ -20,13 +20,13 @@ import (
 	"fmt"
 	"github.com/manifoldco/promptui"
 	"github.com/spf13/viper"
-	"text/template"
 	"io/ioutil"
 	"log"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"strings"
+	"text/template"
 )
 
 type ObjDef struct {

@@ -22,8 +22,8 @@ import (
 	"github.com/spf13/viper"
 	"io/ioutil"
 	"log"
+	"os"
 	"path/filepath"
-  "os"
 	"standardized/internal"
 )
 
@@ -47,10 +47,10 @@ var repoListCmd = &cobra.Command{
 			fmt.Println(f.Name() + " : " + viper.GetString("url"))
 		}
 
-    if tools.Exists(".stdized") {
-      curr_dir, _ := os.Getwd()
-      fmt.Println("_local :", filepath.Join(curr_dir, ".stdized"))
-    }
+		if tools.Exists(".stdized") {
+			curr_dir, _ := os.Getwd()
+			fmt.Println("_local :", filepath.Join(curr_dir, ".stdized"))
+		}
 	},
 }
 
