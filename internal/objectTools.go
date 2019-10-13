@@ -90,7 +90,6 @@ func (o *ObjDef) Apply() {
 
 		query := data.(map[interface{}]interface{})["description"].(string)
 		opts := input.Options{
-			// Read the default val from env var
 			Required:  true,
 			Loop:      true,
 			HideOrder: true,
