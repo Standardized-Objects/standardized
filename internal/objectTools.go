@@ -18,8 +18,8 @@ package tools
 
 import (
 	"fmt"
-	"github.com/manifoldco/promptui"
 	"github.com/spf13/viper"
+	"github.com/tcnksm/go-input"
 	"io/ioutil"
 	"log"
 	"os"
@@ -81,17 +81,26 @@ func (o *ObjDef) Apply() {
 	values := viper.Get("values")
 	config := make(map[string]string, len(values.([]interface{})))
 
+	ui := &input.UI{
+		Writer: os.Stdout,
+		Reader: os.Stdin,
+	}
+
 	for _, data := range values.([]interface{}) {
 
-		prompt := promptui.Prompt{
-			Label: data.(map[interface{}]interface{})["description"].(string),
+		query := data.(map[interface{}]interface{})["description"].(string)
+		opts := input.Options{
+			// Read the default val from env var
+			Required:  true,
+			Loop:      true,
+			HideOrder: true,
 		}
 
 		if _default, ok := data.(map[interface{}]interface{})["default"].(string); ok {
-			prompt.Default = _default
+			opts.Default = _default
 		}
 
-		result, err := prompt.Run()
+		result, err := ui.Ask(query, &opts)
 
 		if err != nil {
 			fmt.Printf("Fail %v\n", err)

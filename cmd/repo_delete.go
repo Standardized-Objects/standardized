@@ -18,8 +18,9 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/manifoldco/promptui"
 	"github.com/spf13/cobra"
+	"github.com/tcnksm/go-input"
+	"log"
 	"os"
 	"path/filepath"
 	"standardized/internal"
@@ -37,16 +38,28 @@ var repoDeleteCmd = &cobra.Command{
 		repo_dir := filepath.Join(tools.GetConfigDir(), args[0])
 
 		if tools.Exists(repo_dir) {
-
-			prompt := promptui.Prompt{
-				Label:     "Delete repository [" + args[0] + "]",
-				IsConfirm: true,
+			ui := &input.UI{
+				Writer: os.Stdout,
+				Reader: os.Stdin,
 			}
-			result, err := prompt.Run()
+
+			query := "Delete repository [" + args[0] + "] [y/n]"
+			result, err := ui.Ask(query, &input.Options{
+				HideOrder: true,
+				Required:  true,
+				// Validate input
+				ValidateFunc: func(s string) error {
+					if s != "y" && s != "n" {
+						return fmt.Errorf("input must be y or n")
+					}
+
+					return nil
+				},
+				Loop: true,
+			})
 
 			if err != nil {
-				fmt.Printf("Canceled %v\n", err)
-				return
+				log.Fatal(err)
 			}
 
 			if result == "y" {
@@ -56,6 +69,8 @@ var repoDeleteCmd = &cobra.Command{
 				} else {
 					fmt.Println("Repo deleted")
 				}
+			} else {
+				fmt.Println("Canceled.")
 			}
 		}
 	},
