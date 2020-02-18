@@ -21,7 +21,7 @@ import (
 	"github.com/spf13/cobra"
 	"io/ioutil"
 	"log"
-	"standardized/internal"
+  "github.com/Standardized-Objects/standardized/tools"
 )
 
 var updateCmd = &cobra.Command{

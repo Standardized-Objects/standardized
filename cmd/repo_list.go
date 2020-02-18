@@ -24,7 +24,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
-	"standardized/internal"
+  "github.com/Standardized-Objects/standardized/tools"
 )
 
 var repoListCmd = &cobra.Command{

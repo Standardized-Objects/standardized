@@ -7,9 +7,6 @@ WORKDIR=$(pwd)
 ln -s $WORKDIR $GOPATH/src/standardized
 cd $GOPATH/src/standardized
 
-curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
-dep ensure
-
 env GOOS=linux GOARCH=arm go build -ldflags="-s -w" -v -o standardized-linux-arm . && upx -9 standardized-linux-arm
 env GOOS=linux GOARCH=arm64 go build -ldflags="-s -w" -v -o standardized-linux-arm64 . && upx -9 standardized-linux-arm64
 env GOOS=linux GOARCH=amd64 go build -ldflags="-s -w" -v -o standardized-linux-amd64 . && upx -9 standardized-linux-amd64

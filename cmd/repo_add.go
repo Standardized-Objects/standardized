@@ -22,7 +22,7 @@ import (
 	"github.com/spf13/cobra"
 	"os"
 	"path/filepath"
-	"standardized/internal"
+  "github.com/Standardized-Objects/standardized/tools"
 )
 
 var sshAuth bool

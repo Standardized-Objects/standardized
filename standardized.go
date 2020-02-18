@@ -16,7 +16,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 package main
 
-import "standardized/cmd"
+import "github.com/Standardized-Objects/standardized/cmd"
 
 func main() {
 	cmd.Execute()
