@@ -26,20 +26,20 @@ import (
   "github.com/Standardized-Objects/standardized/tools"
 )
 
-var listCmd = &cobra.Command{
+var stacklsCmd = &cobra.Command{
 	Use:   "list",
-	Short: "List available objects",
+	Short: "List available stacks",
 	Run: func(cmd *cobra.Command, args []string) {
 		// From saved git repos
 		config_dir := tools.GetConfigDir()
 
-		files, err := ioutil.ReadDir(config_dir)
+		files, err := ioutil.ReadDir(filepath.Join(config_dir, "stacks"))
 		if err != nil {
 			log.Fatal(err)
 		}
 
 		for _, f := range files {
-			objs, _ := ioutil.ReadDir(filepath.Join(config_dir, f.Name(), "src", "objects"))
+			objs, _ := ioutil.ReadDir(filepath.Join(config_dir, f.Name(), "stacks"))
 			for _, o := range objs {
 				mode := o.Mode()
 				if mode.IsDir() && o.Name()[:1] != "." {
@@ -64,5 +64,5 @@ var listCmd = &cobra.Command{
 }
 
 func init() {
-	objectCmd.AddCommand(listCmd)
+	stackCmd.AddCommand(stacklsCmd)
 }

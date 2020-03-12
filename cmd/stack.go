@@ -20,11 +20,11 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var repoCmd = &cobra.Command{
-	Use:   "repo",
-	Short: "Manage repositories",
+var stackCmd = &cobra.Command{
+	Use:   "stack",
+	Short: "Software stacks",
 }
 
 func init() {
-	rootCmd.AddCommand(repoCmd)
+	rootCmd.AddCommand(stackCmd)
 }
